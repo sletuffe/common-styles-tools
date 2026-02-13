@@ -130,36 +130,35 @@ CREATE OR REPLACE FUNCTION getpitchicon(inway geometry, sport text) RETURNS otm_
     END IF;
    END IF;
 
-   if (icon='soccer' OR icon='multi') THEN
---
--- Search for surrounding leisure=track
--- at first for closed tracks around the pitch in planet_osm_line
---
-    trackid=ctid FROM planet_osm_line
-              WHERE planet_osm_line.way && ST_EXPAND(myway,trackdist/labelsizefactor) 
-              AND   leisure='track' 
-              AND   CASE WHEN ST_ISCLOSED(planet_osm_line.way)
-                          THEN ST_CONTAINS(ST_MakePolygon(ST_ExteriorRing(planet_osm_line.way)),myway) 
-                         ELSE FALSE 
-                    END
-              LIMIT 1;
---
--- then for track areas around the pitch in planet_osm_polygon
---
-    IF (trackid IS NULL) THEN
-    trackid=ctid FROM planet_osm_polygon
-              WHERE planet_osm_polygon.way && ST_EXPAND(myway,trackdist/labelsizefactor) 
-              AND   leisure='track' 
-              AND   ST_NumGeometries(planet_osm_polygon.way)=1
-              AND   ST_CONTAINS(ST_MakePolygon(ST_ExteriorRing(planet_osm_polygon.way)),myway)
-              LIMIT 1;
-    END IF;
---
---  if there was a leisure=track append "_with_track" to icon
---
-    IF (trackid IS NOT NULL) THEN
-     icon=icon||'_with_track';
-    END IF;
+   IF (icon = 'soccer' OR icon = 'multi') THEN
+       DECLARE
+           found_track BOOLEAN := FALSE;
+       BEGIN
+           -- 1. Recherche dans planet_osm_line
+           SELECT EXISTS (
+               SELECT 1 FROM planet_osm_line
+               WHERE way && ST_EXPAND(myway, trackdist/labelsizefactor)
+                 AND leisure = 'track'
+                 AND ST_ISCLOSED(way)
+                 AND ST_CONTAINS(ST_MakePolygon(ST_ExteriorRing(way)), myway)
+           ) INTO found_track;
+  
+           -- 2. Si pas trouvé, recherche dans planet_osm_polygon
+           IF NOT found_track THEN
+               SELECT EXISTS (
+                   SELECT 1 FROM planet_osm_polygon
+                   WHERE way && ST_EXPAND(myway, trackdist/labelsizefactor)
+                     AND leisure = 'track'
+                     AND ST_NumGeometries(way) = 1
+                     AND ST_CONTAINS(ST_MakePolygon(ST_ExteriorRing(way)), myway)
+               ) INTO found_track;
+           END IF;
+  
+           -- 3. Mise à jour de l'icône
+           IF found_track THEN
+               icon := icon || '_with_track';
+           END IF;
+       END;
    END IF;
 
    if (icon IS NOT NULL) THEN
