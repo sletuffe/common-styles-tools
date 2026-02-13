@@ -135,7 +135,7 @@ CREATE OR REPLACE FUNCTION getpitchicon(inway geometry, sport text) RETURNS otm_
 -- Search for surrounding leisure=track
 -- at first for closed tracks around the pitch in planet_osm_line
 --
-    trackid=osm_id FROM planet_osm_line
+    trackid=ctid FROM planet_osm_line
               WHERE planet_osm_line.way && ST_EXPAND(myway,trackdist/labelsizefactor) 
               AND   leisure='track' 
               AND   CASE WHEN ST_ISCLOSED(planet_osm_line.way)
@@ -147,7 +147,7 @@ CREATE OR REPLACE FUNCTION getpitchicon(inway geometry, sport text) RETURNS otm_
 -- then for track areas around the pitch in planet_osm_polygon
 --
     IF (trackid IS NULL) THEN
-    trackid=osm_id FROM planet_osm_polygon
+    trackid=ctid FROM planet_osm_polygon
               WHERE planet_osm_polygon.way && ST_EXPAND(myway,trackdist/labelsizefactor) 
               AND   leisure='track' 
               AND   ST_NumGeometries(planet_osm_polygon.way)=1
