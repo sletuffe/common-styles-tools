@@ -36,7 +36,7 @@ column=`psql -d $DBname -t -c "SELECT attname FROM pg_attribute \
          AND attname = 'otm_isolation';"`
 
 if [ "$column" != " otm_isolation" ] ; then
- psql -d $DBname -c "ALTER TABLE planet_osm_point ADD COLUMN otm_isolation text;"
+ psql -d $DBname -c "ALTER TABLE planet_osm_point ADD COLUMN otm_isolation integer;"
 fi
 
 #
@@ -64,3 +64,4 @@ psql -A -t -F ";" $DBname -c \
                                (otm_isolation IS NULL or otm_isolation NOT SIMILAR TO '[0-9]+');;" \
   | $toolpath/isolation -f $demfile -o sql | psql $DBname 
 
+psql -d $db -c "CREATE INDEX idx_peaks_isolation ON planet_osm_point (otm_isolation) WHERE natural IN ('peak', 'volcano');"
