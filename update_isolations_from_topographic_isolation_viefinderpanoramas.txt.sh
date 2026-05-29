@@ -15,5 +15,5 @@ wget -q https://geo.dianacht.de/topo/topographic_isolation_viefinderpanoramas.tx
 echo "done"
 
 echo "Creating index on otm_isolation..."
-psql -d $db -c "CREATE INDEX idx_peaks_isolation ON planet_osm_point (otm_isolation) WHERE natural IN ('peak', 'volcano') or amenity = 'parking';"
+psql -d $db -c "CREATE INDEX idx_peaks_isolation ON planet_osm_point (otm_isolation) WHERE \"natural\" IN ('peak', 'volcano') or amenity = 'parking';"
 echo "done"
