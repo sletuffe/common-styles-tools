@@ -35,7 +35,7 @@ column=`psql -d $db -t -c "SELECT attname FROM pg_attribute \
          AND attname = 'otm_isolation';"`
 
 if [ "$column" != " otm_isolation" ] ; then
- psql -d $db -c "ALTER TABLE planet_osm_point ADD COLUMN otm_isolation text;"
+ psql -d $db -c "ALTER TABLE planet_osm_point ADD COLUMN otm_isolation integer;"
 fi
 
 column=`psql -d $db -t -c "SELECT attname FROM pg_attribute \
@@ -43,7 +43,7 @@ column=`psql -d $db -t -c "SELECT attname FROM pg_attribute \
          AND attname = 'otm_isolation';"`
 
 if [ "$column" != " otm_isolation" ] ; then
- psql -d $db -c "ALTER TABLE planet_osm_polygon ADD COLUMN otm_isolation text;"
+ psql -d $db -c "ALTER TABLE planet_osm_polygon ADD COLUMN otm_isolation integer;"
 fi
 
 # This index is needed for quick update base on osm_id
