@@ -959,6 +959,7 @@ $$ LANGUAGE plpgsql;
 -- Building hierarchy of areas
 --
 
+DROP TYPE IF EXISTS otm_natural_area_hierarchy CASCADE;
 CREATE TYPE otm_natural_area_hierarchy AS (nextregionsize REAL,subregionsize REAL);
 
 CREATE OR REPLACE FUNCTION OTM_Next_Natural_Area_Size(myosm_id IN BIGINT,myway_area REAL,myway IN GEOMETRY) RETURNS otm_natural_area_hierarchy AS $$

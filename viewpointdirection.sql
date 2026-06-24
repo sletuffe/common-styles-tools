@@ -27,7 +27,9 @@
 --
 -- data type for a direction with start,end and angle
 -- and the same for two directions
+DROP TYPE IF EXISTS otm_vp_viewrange CASCADE;
 CREATE TYPE otm_vp_viewrange     AS (s INTEGER, e INTEGER,a INTEGER);
+DROP TYPE IF EXISTS otm_vp_twoviewranges CASCADE;
 CREATE TYPE otm_vp_twoviewranges AS (s1 INTEGER, e1 INTEGER,a1 INTEGER,s2 INTEGER, e2 INTEGER,a2 INTEGER);
 
 

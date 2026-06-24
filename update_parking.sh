@@ -100,7 +100,7 @@ date
 psql -A -t -F ";" $db  -c "SELECT osm_id,ST_X(way),ST_Y(way),osm_id \
       FROM planet_osm_point WHERE amenity='parking' AND (hiking='yes' or hiking='_otm_yes');" > /tmp/parking_point.csv
 
-rm -f tmp/parking_point.sql tmp/parking_polygon.sql
+rm -f /tmp/parking_point.sql /tmp/parking_polygon.sql
 
 # Import the calculated isolations
 #
