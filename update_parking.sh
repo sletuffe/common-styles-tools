@@ -47,7 +47,6 @@ if [ "$column" != " otm_isolation" ] ; then
 fi
 
 # This index is needed for quick update base on osm_id
-psql -d $db -c "create index IF NOT EXISTS planet_osm_point_osm_id on planet_osm_point (osm_id);"
 
 
 ########## Update ###########
