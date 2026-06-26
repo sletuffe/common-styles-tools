@@ -4,7 +4,7 @@
 . $(dirname $0)/config.sh
 
 echo "creating the otm_isolation column to hold isolation information of peaks..."
-psql -d $db -c "ALTER TABLE planet_osm_point ADD COLUMN otm_isolation integer;" 
+psql -d $db -c "ALTER TABLE planet_osm_point ADD COLUMN IF NOT EXISTS otm_isolation integer;" 
 
 echo "creating an index on osm_id because osm2pgsql newer versions does no create it anymore, and we need it to update peak isolation..."
 echo "done"
