@@ -102,10 +102,11 @@ psql -d $db -c "CREATE TABLE naturalarealabels AS
             AND name IS NOT NULL
         ) AS areas
         UNION ALL
-        SELECT way, name, \"natural\" AS areatype, (ST_Length(way)*ST_Length(way)/10)::real as way_area, (OTM_Next_Natural_Area_Size(osm_id,0.0,way)).nextregionsize, (OTM_Next_Natural_Area_Size(osm_id,0.0,way)).subregionsize 
-        FROM planet_osm_line AS li 
-        WHERE \"natural\" IN ('massif', 'mountain_range', 'valley','couloir','ridge','arete','gorge','canyon') 
-        AND name IS NOT NULL 
+        SELECT way, name, \"natural\" AS areatype, (ST_Length(way)*ST_Length(way)/10)::real as way_area, hier.nextregionsize, hier.subregionsize 
+        FROM planet_osm_line AS li,
+        LATERAL OTM_Next_Natural_Area_Size(li.osm_id, 0.0, li.way) AS hier
+        WHERE li.\"natural\" IN ('massif', 'mountain_range', 'valley','couloir','ridge','arete','gorge','canyon') 
+        AND li.name IS NOT NULL 
         AND NOT EXISTS (SELECT 1 FROM planet_osm_polygon AS po WHERE po.osm_id=li.osm_id)
     ) AS combined_natural;"
 psql -d $db -c "CREATE INDEX naturalarealabels_way_idx ON naturalarealabels USING GIST (way);"
