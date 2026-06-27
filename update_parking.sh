@@ -46,7 +46,9 @@ if [ "$column" != " otm_isolation" ] ; then
  psql -d $db -c "ALTER TABLE planet_osm_polygon ADD COLUMN otm_isolation integer;"
 fi
 
-# This index is needed for quick update base on osm_id
+# These indexes are needed for quick update based on osm_id (IF NOT EXISTS in case osm2pgsql already created them)
+psql -d $db -c "CREATE INDEX IF NOT EXISTS planet_osm_point_osm_id_idx ON planet_osm_point (osm_id);"
+psql -d $db -c "CREATE INDEX IF NOT EXISTS planet_osm_polygon_osm_id_idx ON planet_osm_polygon (osm_id);"
 
 
 ########## Update ###########
