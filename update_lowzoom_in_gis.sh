@@ -73,15 +73,15 @@ psql -d $db -c "CREATE INDEX cities_way_idx ON cities USING GIST (way);"
 echo "Processing water labels..."
 psql -d $db -c "DROP TABLE IF EXISTS lakelabels;"
 psql -d $db -c "CREATE TABLE lakelabels AS 
-    SELECT arealabel(osm_id,way) AS way, name, 'lakeaxis'::text AS label, way_area FROM planet_osm_polygon WHERE (\"natural\" = 'water' OR water='lake' OR landuse IN ('basin','reservoir')) AND name IS NOT NULL
+    SELECT arealabel(osm_id,way) AS way, name, 'lakeaxis'::text AS label, way_area AS lake_area FROM planet_osm_polygon WHERE (\"natural\" = 'water' OR water='lake' OR landuse IN ('basin','reservoir')) AND name IS NOT NULL
     UNION ALL
-    SELECT arealabel(osm_id,way) AS way, name, 'bayaxis'::text AS label, way_area FROM planet_osm_polygon WHERE \"natural\" = 'bay' AND name IS NOT NULL
+    SELECT arealabel(osm_id,way) AS way, name, 'bayaxis'::text AS label, way_area AS lake_area FROM planet_osm_polygon WHERE \"natural\" = 'bay' AND name IS NOT NULL
     UNION ALL
-    SELECT arealabel(osm_id,way) AS way, name, 'straitaxis'::text AS label, way_area FROM planet_osm_polygon WHERE \"natural\" = 'strait' AND name IS NOT NULL
+    SELECT arealabel(osm_id,way) AS way, name, 'straitaxis'::text AS label, way_area AS lake_area FROM planet_osm_polygon WHERE \"natural\" = 'strait' AND name IS NOT NULL
     UNION ALL
-    SELECT ST_LineMerge(ST_Collect(way)) AS way, MAX(name) AS name, 'straitaxis'::text AS label, (SUM(ST_Length(way))*SUM(ST_Length(way))/10)::real AS way_area FROM planet_osm_line WHERE \"natural\"='strait' AND name IS NOT NULL GROUP BY osm_id
+    SELECT ST_LineMerge(ST_Collect(way)) AS way, MAX(name) AS name, 'straitaxis'::text AS label, (SUM(ST_Length(way))*SUM(ST_Length(way))/10)::real AS lake_area FROM planet_osm_line WHERE \"natural\"='strait' AND name IS NOT NULL GROUP BY osm_id
     UNION ALL
-    SELECT arealabel(osm_id,way) AS way, name, 'glacieraxis'::text AS label, way_area FROM planet_osm_polygon WHERE \"natural\" = 'glacier' AND name IS NOT NULL;"
+    SELECT arealabel(osm_id,way) AS way, name, 'glacieraxis'::text AS label, way_area AS lake_area FROM planet_osm_polygon WHERE \"natural\" = 'glacier' AND name IS NOT NULL;"
 psql -d $db -c "CREATE INDEX lakelabels_way_idx ON lakelabels USING GIST (way);"
 
 # 8. NATURAL AREA LABELS
